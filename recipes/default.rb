@@ -6,7 +6,7 @@ if debian?
 elsif rhel? || fedora?
   prereqs = %w(automake pkgconfig zlib zlib-devel pcre pcre-devel xz xz-devel)
 else
-  log "Don't know prereqs for #{node.platform_family}; proceeding anyway"
+  log "Don't know prereqs for #{node['platform_family']}; proceeding anyway"
   prereqs = []
 end
 
@@ -16,11 +16,11 @@ prereqs.each do |pkg|
   end
 end
 
-cache = "the_silver_searcher-#{node.the_silver_searcher.version}"
+cache = "the_silver_searcher-#{node['the_silver_searcher']['version']}"
 
 remote_file "#{Chef::Config['file_cache_path']}/#{cache}.tar.gz" do
-  source node.the_silver_searcher.url
-  checksum node.the_silver_searcher.checksum
+  source node['the_silver_searcher']['url']
+  checksum node['the_silver_searcher']['checksum']
   notifies :run, 'bash[install ag]', :immediately
 end
 
@@ -29,7 +29,7 @@ bash 'install ag' do
   cwd Chef::Config['file_cache_path']
   code <<-EOH
     tar -zxf #{cache}.tar.gz
-    (cd #{cache} && ./build.sh #{node.the_silver_searcher.build_opt} && make install)
+    (cd #{cache} && ./build.sh #{node['the_silver_searcher']['build_opt']} && make install)
   EOH
   action :nothing
 end
