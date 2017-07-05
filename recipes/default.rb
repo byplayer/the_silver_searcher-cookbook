@@ -33,6 +33,12 @@ bash 'install ag' do
       exit 0
     fi
 
+    if [ ! -z "#{node['the_silver_searcher']['install_dir']}" ]; then
+      if [ -d #{node['the_silver_searcher']['install_dir']} ]; then
+        rm -rf #{node['the_silver_searcher']['install_dir']}
+      fi
+    fi
+
     tar -zxf #{cache}.tar.gz
     (cd #{cache} && ./build.sh #{node['the_silver_searcher']['build_opt']} && make install)
   EOH
