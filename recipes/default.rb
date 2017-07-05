@@ -39,10 +39,7 @@ bash 'install ag' do
       fi
     fi
 
-    # for test
-    pkg-config --list-all
-    pkg-config --cflags --libs libpcre
-
+    export PATH=/usr/bin/:$PATH
     tar -zxf #{cache}.tar.gz
     (cd #{cache} && ./build.sh #{node['the_silver_searcher']['build_opt']} && make install)
   EOH
