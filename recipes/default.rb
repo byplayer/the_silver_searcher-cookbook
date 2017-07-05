@@ -21,15 +21,19 @@ cache = "the_silver_searcher-#{node['the_silver_searcher']['version']}"
 remote_file "#{Chef::Config['file_cache_path']}/#{cache}.tar.gz" do
   source node['the_silver_searcher']['url']
   checksum node['the_silver_searcher']['checksum']
-  notifies :run, 'bash[install ag]', :immediately
 end
 
 bash 'install ag' do
   user 'root'
   cwd Chef::Config['file_cache_path']
   code <<-EOH
+    #{node['the_silver_searcher']['install_dir']}/bin/ag --version 2> /dev/null | grep #{node['the_silver_searcher']['version']} > /dev/null 2>&1
+    result=$?
+    if [ $result -eq 0 ]; then
+      exit 0
+    fi
+
     tar -zxf #{cache}.tar.gz
     (cd #{cache} && ./build.sh #{node['the_silver_searcher']['build_opt']} && make install)
   EOH
-  action :nothing
 end
